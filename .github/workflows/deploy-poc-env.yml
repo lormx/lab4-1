@@ -41,6 +41,7 @@ jobs:
       with:
         inlineScript: |
           az acr create --resource-group ${{ secrets.AZURE_RG }} --name ${{ secrets.ACR_NAME }} --sku Basic        
+  
   build-and-push-image:
     runs-on: ubuntu-latest
     if: ${{ success() }}
@@ -57,6 +58,7 @@ jobs:
       with:
         inlineScript: |
           az acr build -t ${{ secrets.ACR_NAME }}.azurecr.io/${{ env.image_name }}:${{ env.tag }} -r ${{ secrets.ACR_NAME }} .
+  
   deploy-aks:
     runs-on: ubuntu-latest
     if: ${{ success() }}
@@ -113,6 +115,7 @@ jobs:
           WORKSPACE_ID=$(az resource show --resource-type Microsoft.OperationalInsights/workspaces --resource-group ${{ secrets.AZURE_RG }} --name ${{ secrets.WORKSPACE_NAME }} --query "id" -o tsv)
           echo $WORKSPACE_ID
           az aks enable-addons --resource-group ${{ secrets.AZURE_RG }} --name ${{ secrets.CLUSTER_NAME }} --addons monitoring --workspace-resource-id $WORKSPACE_ID
+  
   deploy-microservice:
     runs-on: ubuntu-latest
     environment:
